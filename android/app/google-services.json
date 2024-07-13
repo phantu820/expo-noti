@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "759765997270",
+    "project_id": "noti-b6036",
+    "storage_bucket": "noti-b6036.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:759765997270:android:8031fc6ca54f1fdeaa5b77",
+        "android_client_info": {
+          "package_name": "com.panlala.exponoti"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB4JOR5EnlJJOd3BzM1byUQ5B3snekYBh4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:759765997270:android:4777ec2ab59ea4ecaa5b77",
+        "android_client_info": {
+          "package_name": "com.panlala.noti1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB4JOR5EnlJJOd3BzM1byUQ5B3snekYBh4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
