@@ -13,12 +13,14 @@ Notifications.setNotificationHandler({
 });
 
 async function sendPushNotification(expoPushToken: string) {
+  const noti = [];
+  noti.push(expoPushToken);
   const message = {
-    to: expoPushToken,
+    to: noti,
     sound: "default",
-    title: "Original Title",
-    body: "And here is the body!",
-    data: { someData: "goes here" },
+    title: "title",
+    body: "body",
+    data: { someData: "data" },
   };
 
   await fetch("https://exp.host/--/api/v2/push/send", {
@@ -30,6 +32,15 @@ async function sendPushNotification(expoPushToken: string) {
     },
     body: JSON.stringify(message),
   });
+  // await fetch("http://192.168.1.63:2002/send-notification", {
+  //   method: "POST",
+  //   headers: {
+  //     Accept: "application/json",
+  //     "Accept-encoding": "gzip, deflate",
+  //     "Content-Type": "application/json",
+  //   },
+  //   body: JSON.stringify(message),
+  // });
 }
 
 function handleRegistrationError(errorMessage: string) {
@@ -132,7 +143,7 @@ export default function App() {
         </Text>
       </View>
       <Button
-        title="Press to Send Notification"
+        title="Send"
         onPress={async () => {
           await sendPushNotification(expoPushToken);
         }}
