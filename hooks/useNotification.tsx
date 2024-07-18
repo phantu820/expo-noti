@@ -143,46 +143,6 @@ export default function NotificationProvider({ children }: any) {
   }, []);
 
   useEffect(() => {
-    const socket = new SockJS(`http://192.168.1.31:8080/ws`);
-    // const fetchAPI = async () => {
-    //   try {
-    //     const notificationData = await getNotification()
-    //     const total = await getNumberUnreadNotify()
-    //     setTotalNotRead(total)
-    //     setNotifications(notificationData)
-    //   } catch (e) {
-    //     console.log(e)
-    //   }
-    // }
-
-    // fetchAPI()
-    const stompClient = Stomp.over(socket);
-    stompClient.connect({}, (frame: any) => {
-      console.log("Connected: " + frame);
-      stompClient.subscribe(
-        `/topic/notifications/officeadminsep490@gmail.com`,
-        (message) => {
-          // console.log(message.body);
-          try {
-            sendPushNotification(expoPushToken);
-          } catch (e) {
-            console.log(e);
-          }
-
-          // if (message.body) {
-          //   setTotalNotRead((totalNotRead) => totalNotRead + 1)
-          //   setNotifications((prevNotifications) => [JSON.parse(message.body), ...prevNotifications])
-          // }
-        }
-      );
-    });
-    // return () => {
-    //   if (stompClient) {
-    //     stompClient.disconnect();
-    //   }
-    // };
-  }, []);
-  useEffect(() => {
     // Check if there's a notification that triggered the app launch
     Notifications.getLastNotificationResponseAsync().then((response) => {
       if (response) {
