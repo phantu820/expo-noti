@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Text, View, Button, Platform } from "react-native";
+import { Platform } from "react-native";
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
@@ -176,37 +176,16 @@ export default function NotificationProvider({ children }: any) {
         }
       );
     });
-    return () => {
-      if (stompClient) {
-        stompClient.disconnect();
-      }
-    };
+    // return () => {
+    //   if (stompClient) {
+    //     stompClient.disconnect();
+    //   }
+    // };
   }, []);
   useEffect(() => {
     // Check if there's a notification that triggered the app launch
     Notifications.getLastNotificationResponseAsync().then((response) => {
       if (response) {
-        const socket = new SockJS(`http://192.168.1.31:8080/ws`);
-        const stompClient = Stomp.over(socket);
-        stompClient.connect({}, (frame: any) => {
-          console.log("Connected: " + frame);
-          stompClient.subscribe(
-            `/topic/notifications/officeadminsep490@gmail.com`,
-            (message) => {
-              sendPushNotification(expoPushToken);
-
-              // if (message.body) {
-              //   setTotalNotRead((totalNotRead) => totalNotRead + 1)
-              //   setNotifications((prevNotifications) => [JSON.parse(message.body), ...prevNotifications])
-              // }
-            }
-          );
-        });
-
-        if (stompClient) {
-          stompClient.disconnect();
-        }
-
         const dataString = response.notification.request.content.dataString;
         console.log("quit: ", response.notification.request.content);
 
