@@ -1,160 +1,123 @@
-import { useState, useEffect, useRef } from "react";
-import { Text, View, Button, Platform } from "react-native";
-import * as Device from "expo-device";
-import * as Notifications from "expo-notifications";
-import Constants from "expo-constants";
-import { router } from "expo-router";
+import React, { useState } from "react";
+import {
+  View,
+  TextInput,
+  FlatList,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
+import { AntDesign } from "@expo/vector-icons";
+import Icon from "react-native-vector-icons/Ionicons";
 
-// Notifications.setNotificationHandler({
-//   handleNotification: async () => ({
-//     shouldShowAlert: true,
-//     shouldPlaySound: true,
-//     shouldSetBadge: true,
-//   }),
-// });
+interface Item {
+  id: string;
+  title: string;
+}
 
-async function sendPushNotification(expoPushToken: string) {
-  const noti = [];
-  noti.push(expoPushToken);
-  const message = {
-    to: expoPushToken,
-    sound: "default",
-    title: "title",
-    body: "body",
-    data: { screen: "/(tabs)/explore" },
+const SearchScreen = () => {
+  const [query, setQuery] = useState<string>("");
+  const [results, setResults] = useState<Item[]>([]);
+  const [searched, setSearched] = useState<boolean>(false);
+
+  const items: Item[] = [
+    { id: "1", title: "Item 1" },
+    { id: "2", title: "Item 2" },
+    { id: "3", title: "Item 3" },
+  ];
+
+  const handleSearch = () => {
+    if (query.trim() === "") {
+      setSearched(false);
+      return;
+    }
+
+    const filteredResults = items.filter((item) =>
+      item.title.toLowerCase().includes(query.toLowerCase())
+    );
+
+    setResults(filteredResults);
+    setSearched(true);
   };
 
-  await fetch("https://exp.host/--/api/v2/push/send", {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Accept-encoding": "gzip, deflate",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(message),
-  });
-  // await fetch("http://192.168.1.31:2002/send-notification", {
-  //   method: "POST",
-  //   headers: {
-  //     Accept: "application/json",
-  //     "Accept-encoding": "gzip, deflate",
-  //     "Content-Type": "application/json",
-  //   },
-  //   body: JSON.stringify(message),
-  // });
-}
-
-// function handleRegistrationError(errorMessage: string) {
-//   alert(errorMessage);
-//   throw new Error(errorMessage);
-// }
-
-// async function registerForPushNotificationsAsync() {
-//   if (Platform.OS === "android") {
-//     Notifications.setNotificationChannelAsync("default", {
-//       name: "default",
-//       importance: Notifications.AndroidImportance.MAX,
-//       vibrationPattern: [0, 250, 250, 250],
-//       lightColor: "#FF231F7C",
-//     });
-//   }
-
-//   if (Device.isDevice) {
-//     const { status: existingStatus } =
-//       await Notifications.getPermissionsAsync();
-//     let finalStatus = existingStatus;
-//     if (existingStatus !== "granted") {
-//       const { status } = await Notifications.requestPermissionsAsync();
-//       finalStatus = status;
-//     }
-//     if (finalStatus !== "granted") {
-//       handleRegistrationError(
-//         "Permission not granted to get push token for push notification!"
-//       );
-//       return;
-//     }
-//     const projectId =
-//       Constants?.expoConfig?.extra?.eas?.projectId ??
-//       Constants?.easConfig?.projectId;
-//     if (!projectId) {
-//       handleRegistrationError("Project ID not found");
-//     }
-//     try {
-//       const pushTokenString = (
-//         await Notifications.getExpoPushTokenAsync({
-//           projectId,
-//         })
-//       ).data;
-//       console.log(pushTokenString);
-//       return pushTokenString;
-//     } catch (e: unknown) {
-//       handleRegistrationError(`${e}`);
-//     }
-//   } else {
-//     handleRegistrationError("Must use physical device for push notifications");
-//   }
-// }
-
-export default function App() {
-  const [expoPushToken, setExpoPushToken] = useState(
-    "ExponentPushToken[JHYq3FF8-w7VHNgEqNpbfQ]"
-  );
-  const [notification, setNotification] = useState<
-    Notifications.Notification | undefined
-  >(undefined);
-  const notificationListener = useRef<Notifications.Subscription>();
-  const responseListener = useRef<Notifications.Subscription>();
-
-  // useEffect(() => {
-  //   registerForPushNotificationsAsync()
-  //     .then((token) => setExpoPushToken(token ?? ""))
-  //     .catch((error: any) => setExpoPushToken(`${error}`));
-
-  //   notificationListener.current =
-  //     Notifications.addNotificationReceivedListener((notification) => {
-  //       setNotification(notification);
-  //     });
-
-  //   responseListener.current =
-  //     Notifications.addNotificationResponseReceivedListener((response) => {
-  //       console.log(response);
-  //     });
-
-  //   return () => {
-  //     notificationListener.current &&
-  //       Notifications.removeNotificationSubscription(
-  //         notificationListener.current
-  //       );
-  //     responseListener.current &&
-  //       Notifications.removeNotificationSubscription(responseListener.current);
-  //   };
-  // }, []);
+  const clearSearch = () => {
+    setQuery("");
+    setResults([]);
+    setSearched(false);
+  };
 
   return (
-    <View
-      style={{ flex: 1, alignItems: "center", justifyContent: "space-around" }}
-    >
-      <Text>Your Expo push token: {expoPushToken}</Text>
-      <View style={{ alignItems: "center", justifyContent: "center" }}>
-        <Text>
-          Title: {notification && notification.request.content.title}{" "}
-        </Text>
-        <Text>Body: {notification && notification.request.content.body}</Text>
-        <Text>
-          Data:{" "}
-          {notification && JSON.stringify(notification.request.content.data)}
-        </Text>
+    <View style={styles.container}>
+      <View style={styles.searchContainer}>
+        <Icon name="search" size={20} color="gray" style={styles.searchIcon} />
+        <TextInput
+          style={styles.input}
+          placeholder="Nhập từ khóa tìm kiếm"
+          value={query}
+          onChangeText={(text) => setQuery(text)}
+          onSubmitEditing={handleSearch}
+        />
+        {query.length > 0 && (
+          <TouchableOpacity onPress={clearSearch}>
+            <AntDesign
+              name="closecircle"
+              size={20}
+              color="gray"
+              style={styles.clearIcon}
+            />
+          </TouchableOpacity>
+        )}
       </View>
-      <Button
-        title="Send"
-        onPress={async () => {
-          await sendPushNotification(expoPushToken);
-        }}
-      />
-      <Button
-        title="target"
-        onPress={() => router.navigate("/(tabs)/explore")}
-      ></Button>
+      {searched && results.length === 0 ? (
+        <Text style={styles.noResults}>Không có kết quả</Text>
+      ) : (
+        <FlatList
+          data={results}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <Text style={styles.item}>{item.title}</Text>
+          )}
+        />
+      )}
     </View>
   );
-}
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
+  },
+  searchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderColor: "gray",
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    marginBottom: 12,
+  },
+  searchIcon: {
+    marginRight: 8,
+  },
+  input: {
+    flex: 1,
+    height: 40,
+  },
+  clearIcon: {
+    marginLeft: 8,
+  },
+  noResults: {
+    textAlign: "center",
+    color: "gray",
+    fontSize: 20,
+    marginTop: 20,
+  },
+  item: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "lightgray",
+  },
+});
+
+export default SearchScreen;
